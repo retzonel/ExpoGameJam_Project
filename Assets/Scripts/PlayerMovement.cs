@@ -18,12 +18,15 @@ public class PlayerMovement : MonoBehaviour
     private float targetAngle;
     private float initialY;
 
+    Player player;
+
     [SerializeField] private float bobbingFreq;
     [SerializeField] private float boobingAmp;
 
     void Start()
     {
         RB = GetComponent<Rigidbody2D>();
+        player = GetComponent<Player>();
         initialY = RB.position.y;
     }
 
@@ -43,6 +46,11 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (!player.playerAirTank.IsInWater && movementInput.y > 0)
+        {
+            movementInput.y = 0;
+        }
+        
         if (movementInput.magnitude > 0 && currentSpeed >= 0)
         {
             oldMovementInput = movementInput;

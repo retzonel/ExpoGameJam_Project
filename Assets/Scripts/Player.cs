@@ -8,6 +8,7 @@ public class Player : MonoBehaviour
     [SerializeField] private float startHealth = 10f;
 
     public PlayerAirTank playerAirTank {get; private set;}
+    public PlayerFishCatching playerFishCatching {get; private set;}
 
     public static Player instance;
     private void Awake()
@@ -22,6 +23,7 @@ public class Player : MonoBehaviour
     void Start()
     {
         playerAirTank = GetComponent<PlayerAirTank>();
+        playerFishCatching = GetComponent<PlayerFishCatching>();
         CurrentHealth = startHealth;
     }
 
@@ -42,6 +44,7 @@ public class Player : MonoBehaviour
     public void Die()
     {
         GameManager.instance.SetGameState(GameState.GameOver);
+        Debug.Log("Player Dead");
     }
 
 

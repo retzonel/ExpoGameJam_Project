@@ -15,7 +15,7 @@ TagManager:
   - Water
   - UI
   - Player
-  - NetProjectile
+  - Interact
   - Objective
   - Fish
   - Level

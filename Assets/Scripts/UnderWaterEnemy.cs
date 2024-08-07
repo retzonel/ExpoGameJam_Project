@@ -20,6 +20,8 @@ public class UnderWaterEnemy : MonoBehaviour
 
     [SerializeField] LayerMask playerLayer;
 
+    [SerializeField] BoxCollider2D waterCol;
+
 
     void Start()
     {
@@ -28,6 +30,8 @@ public class UnderWaterEnemy : MonoBehaviour
         ai = GetComponent<IAstarAI>();
         roamingPosition = GetRoamingPosition();
         ai.destination = roamingPosition;
+        // waterCol = GameObject.Find("Water").GetComponent<BoxCollider2D>();
+        // waterCol = GameObject.FindGameObjectWithTag("Water").GetComponent<BoxCollider2D>();
     }
 
     void Update()
@@ -54,7 +58,26 @@ public class UnderWaterEnemy : MonoBehaviour
 
     Vector3 GetRoamingPosition()
     {
-        return startPosition + Utilities.GetRandomDir() * UnityEngine.Random.Range(roamRange, -roamRange);
+        const int maxAttempts = 100;
+        int attempts = 0;
+        Vector3 genPos;
+
+        do
+        {
+            genPos = startPosition + Utilities.GetRandomDir() * UnityEngine.Random.Range(-roamRange, roamRange);
+            attempts++;
+
+            // Debugging statements
+            // Debug.Log($"Attempt {attempts}: genPos = {genPos}, inCollider = {IsWithinWaterCollider(genPos)}");
+
+            if (attempts >= maxAttempts)
+            {
+                // Debug.LogWarning("Failed to find a valid roaming position within 100 attempts.");
+                break;
+            }
+        } while (!IsWithinWaterCollider(genPos));
+
+        return genPos;
     }
 
     private void Attack()
@@ -64,6 +87,7 @@ public class UnderWaterEnemy : MonoBehaviour
         if (col.CompareTag("Player"))
         {
             Player.instance.ReduceHealthBy(damage);
+            Destroy(gameObject);
         }
     }
 
@@ -83,7 +107,7 @@ public class UnderWaterEnemy : MonoBehaviour
         ai.isStopped = false;
         ai.destination = roamingPosition;
         ai.SearchPath();
-        
+
         if (ai.reachedDestination)
         {
             roamingPosition = GetRoamingPosition();
@@ -92,6 +116,11 @@ public class UnderWaterEnemy : MonoBehaviour
         {
             ai.SearchPath();
         }
+    }
+
+    bool IsWithinWaterCollider(Vector3 position)
+    {
+        return waterCol.OverlapPoint(position);
     }
 }
 

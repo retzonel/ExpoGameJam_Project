@@ -5,9 +5,9 @@ using UnityEngine;
 
 public class PlayerAirTank : MonoBehaviour
 {
-    bool isInWater = true;
-    [SerializeField] private float maxAir = 100;
-    [SerializeField] private float currentAir;
+    public bool IsInWater {get; private set;} = true;
+    public float maxAir = 100;
+    public float currentAir;
     [SerializeField] private float airDelpletionRate = 5f;
     [SerializeField] private float healthReductionRate = 1f;
 
@@ -21,7 +21,7 @@ public class PlayerAirTank : MonoBehaviour
 
     void Update()
     {
-        if (isInWater)
+        if (IsInWater)
         {
             if (currentAir > 0)
             {
@@ -38,7 +38,7 @@ public class PlayerAirTank : MonoBehaviour
     {
         if (other.CompareTag("Surface"))
         {
-            isInWater = false;
+            IsInWater = false;
         }
     }
 
@@ -46,7 +46,7 @@ public class PlayerAirTank : MonoBehaviour
     {
         if (other.CompareTag("Surface"))
         {
-            isInWater = true;
+            IsInWater = true;
         }
     }
 

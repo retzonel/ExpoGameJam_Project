@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    public GameState gameState;
+    public GameState GameState {get; private set;}
     public bool MissionComplete { get; private set; }
 
     public static GameManager instance;
@@ -41,12 +41,13 @@ public class GameManager : MonoBehaviour
     public void SetGameState(GameState _)
     {
         OnStateChange?.Invoke(this, EventArgs.Empty);
-        gameState = _;
+        GameState = _;
     }
 
-
-
-
+    public bool IsGameOver()
+    {
+        return GameState == GameState.GameOver;
+    }
 }
 
 public enum GameState { Playing, GameOver }

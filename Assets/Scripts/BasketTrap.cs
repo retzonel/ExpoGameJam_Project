@@ -10,7 +10,8 @@ public class BasketTrap : MonoBehaviour, IInteractable
     {
         if (caugthObjective == true)
         {
-            Debug.Log("Mission complete?!");
+            Debug.Log("Mission complete!");
+            GameManager.instance.SetMissionState(true);
             Destroy(this.gameObject);
         }
     }
@@ -23,5 +24,11 @@ public class BasketTrap : MonoBehaviour, IInteractable
             caugthObjective = true;
             Destroy(objectiveGO);
         }
+
+        // if (other.transform.CompareTag("Enemy"))
+        // {
+        //     GameObject enemyGO = other.gameObject;
+        //     Destroy(enemyGO);
+        // }
     }
 }
