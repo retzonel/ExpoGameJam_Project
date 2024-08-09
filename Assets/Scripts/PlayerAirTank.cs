@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -12,6 +13,9 @@ public class PlayerAirTank : MonoBehaviour
     [SerializeField] private float healthReductionRate = 1f;
 
     Player player;
+    [Space]
+    [SerializeField] ParticleSystem buubleEffect;
+    bool isBubblePlaying = false;
 
     void Start()
     {
@@ -29,6 +33,13 @@ public class PlayerAirTank : MonoBehaviour
             } else {
                 player.ReduceHealthBy(healthReductionRate);
             }
+            if(!isBubblePlaying){
+                buubleEffect.Play();
+                isBubblePlaying = true;
+            }
+        } else {
+            buubleEffect.Stop();
+            isBubblePlaying = false;
         }
 
         currentAir = Mathf.Clamp(currentAir, 0, maxAir);
@@ -50,4 +61,8 @@ public class PlayerAirTank : MonoBehaviour
         }
     }
 
+    public void ResetAirTank()
+    {
+        currentAir = maxAir;
+    }
 }

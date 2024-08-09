@@ -20,7 +20,7 @@ TagManager:
   - Fish
   - Level
   - Obstacles
-  - 
+  - Enemy
   - 
   - 
   - 
@@ -50,9 +50,15 @@ TagManager:
   - name: Water
     uniqueID: 779462521
     locked: 0
-  - name: Tiles
-    uniqueID: 2011445675
+  - name: Enemy
+    uniqueID: 806141423
     locked: 0
   - name: Player
     uniqueID: 1049391879
+    locked: 0
+  - name: Caustics
+    uniqueID: 3381914963
+    locked: 0
+  - name: Tiles
+    uniqueID: 2011445675
     locked: 0

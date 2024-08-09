@@ -1,19 +1,25 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Boat : MonoBehaviour, IInteractable
 {
-    public void Interact(Transform interactor)
+
+    public UnityEvent OnInteractMe;
+    
+    public void Interact(Transform _sender)
     {
-        if (GameManager.instance.MissionComplete)
+        Debug.Log(_sender.name + "is interacting with" + gameObject.name);
+        if (GameManager.instance.MissionComplete == true)
         {
-            GameManager.instance.SetGameState(GameState.GameOver);
+            GameManager.instance.SetGameState(GameState.GameOver);            
+            GameManager.instance.SetGameEndType(GameEndType.MissionCompleteBoat);
+            GameManager.instance.GameEnd();
         } else {
-            Debug.Log("msiiosn not complete cannot come to boat");
-            if (Player.instance.playerAirTank.currentAir < (Player.instance.playerAirTank.maxAir/2))
+            if (Player.instance.PlayerAirTank.currentAir < (Player.instance.PlayerAirTank.maxAir/2))
             {
-                Debug.Log("refilled tank and suplies");
+                Player.instance.PlayerAirTank.ResetAirTank();
             }
         }
     }

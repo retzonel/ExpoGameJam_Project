@@ -1,18 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
-public class Objective : MonoBehaviour
+public class Objective : MonoBehaviour, IInteractable
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    public UnityEvent OnInteractMe;
 
-    // Update is called once per frame
-    void Update()
+    public void Interact(Transform _sender)
     {
-        
+        Debug.Log(_sender.name + "is interacting with" + gameObject.name);
+        if (_sender.CompareTag("Player"))
+        {
+            GameManager.instance.SetMissionState(true);
+            OnInteractMe?.Invoke();
+        }
     }
 }

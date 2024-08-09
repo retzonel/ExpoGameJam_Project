@@ -1,11 +1,15 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Pathfinding;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using UnityEngine.Video;
 
 public class UnderWaterEnemy : MonoBehaviour
 {
     public EnemyState state;
+    public EnemyType enemyType;
     IAstarAI ai;
 
     [Space]
@@ -22,6 +26,22 @@ public class UnderWaterEnemy : MonoBehaviour
 
     [SerializeField] BoxCollider2D waterCol;
 
+    [Space]
+    [SerializeField] GameObject deathParticleFx;
+    [SerializeField] float knockBackStrength = 20;
+
+    Rigidbody2D rb2D;
+
+    int roamerLife = 3;
+    [SerializeField] ParticleSystem roamerAttackFx;
+
+    bool isAttackFxPlaying = false;
+
+    private void Awake()
+    {
+
+        waterCol = GameObject.Find("Water").GetComponent<BoxCollider2D>();
+    }
 
     void Start()
     {
@@ -30,12 +50,15 @@ public class UnderWaterEnemy : MonoBehaviour
         ai = GetComponent<IAstarAI>();
         roamingPosition = GetRoamingPosition();
         ai.destination = roamingPosition;
-        // waterCol = GameObject.Find("Water").GetComponent<BoxCollider2D>();
-        // waterCol = GameObject.FindGameObjectWithTag("Water").GetComponent<BoxCollider2D>();
+        rb2D = GetComponent<Rigidbody2D>();
     }
 
     void Update()
     {
+        if (GameManager.instance.IsGameOver() == true || GameManager.instance.IsGamePaused() == true)
+        {
+            return;
+        }
         switch (state)
         {
             case EnemyState.Roaming:
@@ -54,6 +77,8 @@ public class UnderWaterEnemy : MonoBehaviour
                 }
                 break;
         }
+
+
     }
 
     Vector3 GetRoamingPosition()
@@ -87,7 +112,18 @@ public class UnderWaterEnemy : MonoBehaviour
         if (col.CompareTag("Player"))
         {
             Player.instance.ReduceHealthBy(damage);
-            Destroy(gameObject);
+            if (enemyType == EnemyType.Kamizaze)
+            {
+                Die();
+            }
+            else
+            {
+                if (!isAttackFxPlaying)
+                {
+                    roamerAttackFx.Play();
+                    isAttackFxPlaying = true;
+                }
+            }
         }
     }
 
@@ -99,6 +135,15 @@ public class UnderWaterEnemy : MonoBehaviour
         if (Vector3.Distance(transform.position, Player.instance.transform.position) < attackRange)
         {
             Attack();
+        }
+        else
+        {
+            if (enemyType == EnemyType.Roamer)
+            {
+                roamerAttackFx.Stop();
+                isAttackFxPlaying = false;
+
+            }
         }
     }
 
@@ -122,6 +167,46 @@ public class UnderWaterEnemy : MonoBehaviour
     {
         return waterCol.OverlapPoint(position);
     }
+
+    public void OnHit(GameObject sender)
+    {
+        if (enemyType == EnemyType.Kamizaze)
+        {
+            Die();
+        }
+        else
+        {
+            if (roamerLife <= 0)
+            {
+                Die();
+            }
+            else
+            {
+                StopAllCoroutines();
+                Vector2 dir = (transform.position - sender.transform.position).normalized;
+                rb2D.AddForce(-dir * knockBackStrength, ForceMode2D.Impulse);
+                StartCoroutine(ResetKnockback());
+                roamerLife--;
+            }
+        }
+
+    }
+
+    IEnumerator ResetKnockback()
+    {
+        yield return new WaitForSeconds(0.15f);
+        rb2D.velocity = Vector3.zero;
+    }
+
+    public void Die()
+    {
+        GameObject _ = Instantiate(deathParticleFx, transform.position, Quaternion.identity);
+        Destroy(_, 2);
+        Destroy(gameObject);
+    }
 }
 
 public enum EnemyState { Roaming, Chasing }
+public enum EnemyType { Roamer, Kamizaze }
+//Roamer walks around and is defaeated by knocking it backj
+//kamikaze attcks you once and deducts health on hit
