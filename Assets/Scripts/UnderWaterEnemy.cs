@@ -2,9 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Pathfinding;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
-using UnityEngine.Video;
 
 public class UnderWaterEnemy : MonoBehaviour
 {
@@ -195,7 +193,7 @@ public class UnderWaterEnemy : MonoBehaviour
     IEnumerator ResetKnockback()
     {
         yield return new WaitForSeconds(0.15f);
-        rb2D.velocity = Vector3.zero;
+        rb2D.linearVelocity = Vector3.zero;
     }
 
     public void Die()
