@@ -90,7 +90,7 @@ public class PlayerMovement : MonoBehaviour
             // BobbingEffect();
         }
         currentSpeed = Mathf.Clamp(currentSpeed, 0, maxSpeed);
-        RB.linearVelocity = oldMovementInput * currentSpeed;
+        RB.velocity = oldMovementInput * currentSpeed;
 
         float currentAngle = transform.eulerAngles.z;
         float newAngle = Mathf.LerpAngle(currentAngle, targetAngle, Time.deltaTime * rotationSpeed);
